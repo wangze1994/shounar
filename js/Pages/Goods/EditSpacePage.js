@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
-import { View, StyleSheet, Text, PanResponder } from 'react-native'
-import { NavigationItem, CommonButton } from '../../Components'
-import { Heading2 } from '../../Components/Text'
+import { View, StyleSheet, TouchableOpacity, PanResponder, Image } from 'react-native'
+import { NavigationItem } from '../../Components'
+import { Heading2, Paragraph } from '../../Components/Text'
 import theme from '../../Constants/theme'
 import px2dp from '../../Utils/px2dp'
 import _ from 'lodash'
@@ -26,6 +26,12 @@ class StartPage extends Component {
         { text: '2p', style: {} },
         { text: '3p', style: {} },
         { text: '4p', style: {} }
+      ],
+      options: [
+        { text: '5p', style: {} },
+        { text: '6p', style: {} },
+        { text: '7p', style: {} },
+        { text: '8p', style: {} }
       ]
     }
     this.items = []
@@ -34,11 +40,31 @@ class StartPage extends Component {
   renderItem () {
     return this.state.names.map((item, i) => {
       return (
-        <View
-          {...this._panResponder.panHandlers}
-          key={i}
-          style={[styles.item, {top: i * px2dp(49)}, item.style]}>
-          <Text style={styles.itemTitle}>{item.text}</Text>
+        <View {...this._panResponder.panHandlers} style={[styles.item, { top: i * px2dp(49) }, item.style]} key={i}>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => this.toSplice(i)}>
+              <Image style={styles.icon} source={require('../../Assets/order_minus_icon.png')} resizeMode='contain' />
+            </TouchableOpacity>
+            <Heading2 style={{ fontWeight: theme.lightFont, fontSize: 15, color: '#303030' }}>{item.text}</Heading2>
+          </View>
+          <View>
+            <Image style={styles.icon} source={require('../../Assets/order_icon.png')} />
+          </View>
+        </View>
+      )
+    })
+  }
+
+  renderOption () {
+    return this.state.options.map((item, i) => {
+      return (
+        <View style={styles.option} key={i}>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => this.toPush(i)}>
+              <Image style={styles.icon} source={require('../../Assets/order_add_icon.png')} resizeMode='contain' />
+            </TouchableOpacity>
+            <Heading2 style={{fontWeight: theme.lightFont, fontSize: 15, color: '#303030'}}>{item.text}</Heading2>
+          </View>
         </View>
       )
     })
@@ -48,15 +74,36 @@ class StartPage extends Component {
     return (
       <View style={styles.container}>
         {this.renderItem()}
-        <CommonButton text={'push'} onPress={() => this.toPush()} containerStyle={{top: px2dp(500)}} />
+        <View style={[styles.optionContianer, {top: this.state.names.length * px2dp(49)}]}>
+          <View style={styles.textContianer}>
+            <Paragraph style={{color: '#999999', fontSize: px2dp(12)}}>显示/隐藏</Paragraph>
+          </View>
+          <View>
+            {this.renderOption()}
+          </View>
+        </View>
       </View>
     )
   }
 
-  toPush () {
-    let items = _.cloneDeep(this.state.names)
-    items.push({ text: '5p', style: {} })
-    this.setState({names: items})
+  toSplice (index) {
+    let names = _.cloneDeep(this.state.names)
+    let options = _.cloneDeep(this.state.options)
+    options.push(names[index])
+    names.splice(index, 1)
+    this.setState({options: options}, () => {
+      this.setState({ names: names })
+    })
+  }
+
+  toPush (index) {
+    let names = _.cloneDeep(this.state.names)
+    let options = _.cloneDeep(this.state.options)
+    names.push(options[index])
+    options.splice(index, 1)
+    this.setState({options: options}, () => {
+      this.setState({ names: names })
+    })
   }
 
   componentWillMount () {
@@ -68,46 +115,29 @@ class StartPage extends Component {
         this.index = this._getIdByPosition(pageY)
         this.preY = pageY - locationY
         this.items = _.cloneDeep(this.state.names)
-        //         // get the taped item and highlight it
         let item = this.items[this.index]
-        // item.setNativeProps({
-        //   style: {
-        //     shadowColor: '#000',
-        //     shadowOpacity: 0.3,
-        //     shadowRadius: 5,
-        //     shadowOffset: {height: 0, width: 2},
-        //     elevation: 5,
-        //     zIndex: 101
-        //   }
-        // })
         item.style = {
           shadowColor: '#000',
           shadowOpacity: 0.3,
           shadowRadius: 5,
           shadowOffset: {height: 0, width: 2},
-          elevation: 5,
-          zIndex: 500
+          elevation: 5
         }
         this.setState(() => ({ names: this.items }))
       },
       onPanResponderMove: (evt, gestureState) => {
         let top = this.preY + gestureState.dy
         let item = this.items[this.index]
-        // item.setNativeProps({
-        //   style: {top: top}
-        // })
-        item.style = { top: top }
+        item.style = {
+          top: top,
+          shadowColor: '#000',
+          shadowOpacity: 0.3,
+          shadowRadius: 5,
+          shadowOffset: {height: 0, width: 2},
+          elevation: 5}
         this.setState(() => ({names: this.items}))
         let collideIndex = this._getIdByPosition(evt.nativeEvent.pageY)
         if (collideIndex !== this.index && collideIndex !== -1) {
-          // let collideItem = items[collideIndex]
-          // collideItem.setNativeProps({
-          //   style: {top: this._getTopValueYById(this.index)}
-          // });
-          // collideItem.style = { top: this._getTopValueYById(this.index) };
-                    // swap two values
-          // [this.items[this.index], this.items[collideIndex]] = [this.items[collideIndex], this.items[this.index]];
-          // [this.order[this.index], this.order[collideIndex]] = [this.order[collideIndex], this.order[this.index]]
           [this.items[this.index], this.items[collideIndex]] = [this.items[collideIndex], this.items[this.index]]
           this.setState(() => ({ names: this.items }))
           console.log(this.state.names)
@@ -116,24 +146,9 @@ class StartPage extends Component {
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
-        // const shadowStyle = {
-        //   shadowColor: '#000',
-        //   shadowOpacity: 0,
-        //   shadowRadius: 0,
-        //   shadowOffset: { height: 0, width: 0 },
-        //   elevation: 0,
-        //   zIndex: 100
-        // }
-        // let item = this.items[this.index]
-        //         // go back the correct position
-        // item.setNativeProps({
-        //   style: {...shadowStyle, top: this._getTopValueYById(this.index)}
-        // })
         for (let i = 0, l = this.items.length; i < l; i++) {
           this.items[i].style = {}
         }
-        // let item = this.items[this.index]
-        // item.style = { top: this._getTopValueYById(this.index) }
         this.setState(() => ({names: this.items}))
       },
       onPanResponderTerminate: (evt, gestureState) => {
@@ -147,20 +162,6 @@ class StartPage extends Component {
   _getIdByPosition (pageY) {
     var id = -1
     const height = px2dp(49)
-
-    // if (pageY >= 0 && pageY < height * 1) {
-    //   id = 0
-    // } else if (pageY >= height * 1 && pageY < height * 2) {
-    //   id = 1
-    // } else if (pageY >= height * 2 && pageY < height * 3) {
-    //   id = 2
-    // } else if (pageY >= height * 3 && pageY < height * 4) {
-    //   id = 3
-    // } else if (pageY >= height * 4 && pageY < height * 5) {
-    //   id = 4
-    // } else if (pageY >= height * 5 && pageY < height * 6) {
-    //   id = 5
-    // }
 
     id = Math.floor(pageY / height)
     if (id > this.state.names.length - 1) id = -1
@@ -190,15 +191,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     paddingLeft: px2dp(20),
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
     position: 'absolute',
-    zIndex: 100
+    borderColor: 'grey',
+    borderBottomWidth: 1,
+    zIndex: 8,
+    justifyContent: 'space-between'
   },
   itemTitle: {
     fontSize: px2dp(15),
     color: '#000',
     marginLeft: px2dp(20)
+  },
+  option: {
+    flexDirection: 'row',
+    height: px2dp(49),
+    width: theme.screenWidth,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingLeft: px2dp(20),
+    borderColor: 'grey',
+    borderBottomWidth: 1
+  },
+  icon: {
+    width: 25,
+    height: 25,
+    marginRight: 10
+  },
+  optionContianer: {
+    position: 'absolute',
+    zIndex: 8
+  },
+  textContianer: {
+    backgroundColor: 'grey',
+    flexDirection: 'row',
+    width: theme.screenWidth,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
 
