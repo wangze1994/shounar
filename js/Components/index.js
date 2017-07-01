@@ -7,6 +7,7 @@ import CommonInputText from './CommonInputText'
 import { Separator } from './Separator'
 import FeedbackModal from './FeedbackModal'
 import DragCell from './DragCell'
+import Scan from './Scan'
 export {
     CommonButton,
     CommonInputText,
@@ -16,5 +17,6 @@ export {
     Separator,
     Cell,
     FeedbackModal,
-    DragCell
+    DragCell,
+    Scan
 }

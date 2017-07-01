@@ -16,13 +16,15 @@ export default class Cell extends PureComponent {
     style: ViewPropTypes.style,
     borderStyle: ViewPropTypes.style,
     next: PropTypes.bool,
-    onPress: PropTypes.func
+    onPress: PropTypes.func,
+    other: PropTypes.array
   }
 
   render () {
     let icon = this.props.icon && <Image style={styles.icon} source={this.props.icon} />
     let image = this.props.image && <Image style={styles.icon} source={this.props.image} />
     let next = this.props.next && <Image style={styles.arrow} source={require('../Assets/rightarrow.png')} />
+    let other = this.props.other || null
 
     return (
       <View style={styles.container}>
@@ -33,6 +35,7 @@ export default class Cell extends PureComponent {
             {!this.props.center && <View style={{ flex: 1 }} />}
             <Paragraph style={[{ color: '#999999' }, this.props.subTitleStyle]}>{this.props.subtitle}</Paragraph>
             {image}
+            {other}
             {next}
           </View>
           <View style={[{paddingLeft: 20, paddingRight: 20}, this.props.borderStyle]}>

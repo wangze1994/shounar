@@ -22,16 +22,16 @@ class StartPage extends Component {
     super(props)
     this.state = {
       names: [
-        { text: '1p', style: {} },
-        { text: '2p', style: {} },
-        { text: '3p', style: {} },
-        { text: '4p', style: {} }
+        { text: '星级', style: {} },
+        { text: '购货渠道', style: {} },
+        { text: '价格', style: {} },
+        { text: '颜色', style: {} }
       ],
       options: [
-        { text: '5p', style: {} },
-        { text: '6p', style: {} },
-        { text: '7p', style: {} },
-        { text: '8p', style: {} }
+        { text: '季节', style: {} },
+        { text: '图书', style: {} },
+        { text: '衣装打扮', style: {} },
+        { text: '其它描述', style: {} }
       ]
     }
     this.items = []

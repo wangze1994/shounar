@@ -10,6 +10,9 @@ import OtherLoginPage from '../Pages/User/OtherLoginPage'
 import AccountInfoPage from '../Pages/User/AccountInfoPage'
 import FeedbackPage from '../Pages/User/FeedbackPage'
 import EditSpacePage from '../Pages/Goods/EditSpacePage'
+import AddGoodPage from '../Pages/Goods/AddGoodPage'
+import ScanBarCode from '../Pages/Goods/ScanBarCode'
+import ScanGoodsPage from '../Pages/Goods/ScanGoodsPage'
 
 const Tab = TabNavigator(
   {
@@ -58,11 +61,20 @@ const routeConfiguration = {
     navigationOptions: ({navigation}) => ({
       header: null
     })
+  },
+  AddGood: {
+    screen: AddGoodPage
+  },
+  ScanBarCode: {
+    screen: ScanBarCode
+  },
+  ScanGoods: {
+    screen: ScanGoodsPage
   }
 }
 
 const stackConfiguration = {
-  initialRouteName: 'EditSpace'
+  initialRouteName: 'ScanGoods'
 }
 
 export const MainStackNavigation = StackNavigator(routeConfiguration, stackConfiguration)
